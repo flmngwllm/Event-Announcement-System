@@ -1,0 +1,111 @@
+name: Terraform CI/CD
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'terraform/**'
+      - 'frontend/**'
+      - 'lambda/**'
+  
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'terraform/**'
+      - 'lambda/**'
+
+  workflow_dispatch:
+
+env:
+  TF_WORKING_DIR: ./terraform
+
+jobs:
+  terraform-plan:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./terraform
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Terraform Setup
+        uses: hashicorp/setup-terraform@v3
+      
+      - name: AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Terraform Init
+        id: init 
+        run: terraform init 
+      
+      - name: Terraform Format
+        id: format 
+        run: terraform fmt -check
+      
+      - name: Terraform Validate
+        id: validate 
+        run: terraform validate
+  
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -no-color -out=tfplan -input=false
+
+      - name: Terraform plan status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+
+  terraform-apply:
+    if: github.event_name == 'workflow_dispatch'
+    #if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./terraform
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Terraform Setup
+        uses: hashicorp/setup-terraform@v3
+      
+      - name: AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Terraform Init
+        id: init 
+        run: terraform init 
+
+      - name: Terraform Apply
+        id: apply 
+        run: terraform apply --auto-approve -input=false -parallelism=1 
+      
+      - name: Deploy Lambda Function
+        run: |
+          cd lambda
+          zip -r lambda.zip .
+          cd ..
+
+      - name: Upload Lambda to s3
+        run: |
+          if aws s3 ls "s3://bucket-name/" 2>&1 | grep -q 'NoSuchBucket'; then
+            echo "Bucket does not exist"
+          else
+            aws s3 cp lambda.zip s3://bucket-name/lambda/lambda.zip
+          fi
+
+      - name: Deploy Frontend to S3
+        run: |
+          aws s3 sync ./frontend s3://bucket-name/ --delete
+
