@@ -1,12 +1,12 @@
 resource "aws_s3_bucket" "event_annoucement" {
-    bucket = var.BUCKET_NAME
-    tags = {
-        Name     = var.BUCKET_NAME
-        Environment = "Dev"
-    }
+  bucket = var.BUCKET_NAME
+  tags = {
+    Name        = var.BUCKET_NAME
+    Environment = "Dev"
+  }
 }
 
-resource "aws_s3_bucket_public_access_block" "example" {
+resource "aws_s3_bucket_public_access_block" "public_access" {
   bucket = aws_s3_bucket.event_annoucement.id
 
   block_public_acls       = false
@@ -38,7 +38,7 @@ data "aws_iam_policy_document" "event_policy_document" {
   }
 }
 
-resource "aws_s3_bucket_website_configuration" "example" {
+resource "aws_s3_bucket_website_configuration" "website" {
   bucket = aws_s3_bucket.event_annoucement.id
 
   index_document {
