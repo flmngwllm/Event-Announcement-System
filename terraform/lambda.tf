@@ -17,8 +17,8 @@ resource "aws_iam_role" "iam_for_lambda" {
 }
 
 
-resource "aws_iam_policy_document" "lambda_s3_policy" {
-  name = "lambda-s3-policy"
+data "aws_iam_policy_document" "lambda_s3_policy" {
+  
   statement {
     effect = "Allow"
     actions = [
@@ -26,7 +26,7 @@ resource "aws_iam_policy_document" "lambda_s3_policy" {
       "s3:GetObject",
       "s3:ListObject",
     ]
-    Resource = [
+    resources = [
       aws_s3_bucket.event_announcement.arn,
       "${aws_s3_bucket.event_announcement.arn}/*"
     ]
@@ -66,12 +66,6 @@ resource "aws_lambda_function" "create_events" {
   source_code_hash = data.archive_file.lambda_archive.output_base64sha256
 
   runtime = "python3.12"
-
-  environment {
-    variables = {
-      foo = "bar"
-    }
-  }
 }
 
 
