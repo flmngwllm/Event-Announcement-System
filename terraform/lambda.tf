@@ -42,8 +42,8 @@ resource "aws_iam_policy" "lambda_s3_policy" {
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_s3_policy_attachment" {
-    role = aws_iam_role.iam_for_lambda.name
-    policy_arn = aws_iam_policy.lambda_s3_policy.arn
+  role       = aws_iam_role.iam_for_lambda.name
+  policy_arn = aws_iam_policy.lambda_s3_policy.arn
 }
 
 data "archive_file" "lambda_archive" {
@@ -99,7 +99,7 @@ resource "aws_lambda_permission" "create_events_permission" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.create_events.function_name
   principal     = "apigateway.amazonaws.com"
-  source_arn = "${aws_api_gateway_rest_api.api.execution_arn}/${aws_api_gateway_stage.Prod_stage.stage_name}/PUT/new_events"
+  source_arn    = "${aws_api_gateway_rest_api.api.execution_arn}/${aws_api_gateway_stage.Prod_stage.stage_name}/PUT/new_events"
 
 
 }
@@ -109,5 +109,5 @@ resource "aws_lambda_permission" "subscribe_permission" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.subscribe.function_name
   principal     = "apigateway.amazonaws.com"
-  source_arn = "${aws_api_gateway_rest_api.api.execution_arn}/${aws_api_gateway_stage.Prod_stage.stage_name}/PUT/subscribe"
+  source_arn    = "${aws_api_gateway_rest_api.api.execution_arn}/${aws_api_gateway_stage.Prod_stage.stage_name}/PUT/subscribe"
 }
