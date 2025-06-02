@@ -80,12 +80,6 @@ resource "aws_lambda_function" "subscribe" {
   source_code_hash = data.archive_file.lambda_archive.output_base64sha256
 
   runtime = "python3.12"
-
-  environment {
-    variables = {
-      foo = "bar"
-    }
-  }
 }
 
 resource "aws_lambda_permission" "create_events_permission" {
