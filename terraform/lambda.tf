@@ -17,7 +17,7 @@ resource "aws_iam_role" "iam_for_lambda" {
 }
 
 
-data "aws_iam_policy_document" "lambda_s3_policy" {
+data "aws_iam_policy_document" "lambda_policy" {
 
   statement {
     effect = "Allow"
@@ -33,17 +33,29 @@ data "aws_iam_policy_document" "lambda_s3_policy" {
 
   }
 
+  statement {
+    effect = "Allow"
+    actions = [
+      "sns:Publish",
+    ]
+    resources = [
+      aws_sns_topic.sns_event_announce.arn,
+      "${aws_sns_topic.sns_event_announce.arn}/*"
+    ]
+
+  }
+
 }
 
 
-resource "aws_iam_policy" "lambda_s3_policy" {
-  name   = "lambda-s3-policy"
-  policy = data.aws_iam_policy_document.lambda_s3_policy.json
+resource "aws_iam_policy" "resource_lambda_s3_policy" {
+  name   = "lambda_policy"
+  policy = data.aws_iam_policy_document.lambda_policy.json
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_s3_policy_attachment" {
   role       = aws_iam_role.iam_for_lambda.name
-  policy_arn = aws_iam_policy.lambda_s3_policy.arn
+  policy_arn = aws_iam_policy.resource_lambda_s3_policy.arn
 }
 
 data "archive_file" "lambda_archive" {
