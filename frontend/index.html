@@ -4,23 +4,33 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="./style.css">
+        <title>Event Announcements</title>
         
     </head>
     <body>
         <h1>Create Event</h1>
         <form id="eventForm">
+            
             <label for="eventName">Title</label ><br>
             <input type="text" name="eventName" id="eventName" required/><br>
             <label for="eventDate">Date</label><br>
             <input type="text" name="eventDate" id="eventDate" required/><br>
+            <label for="eventId">Event ID</label><br>
+            <input type="text" name="eventId" id="eventId" required /><br>
             <button type="submit">Create Event</button>
+           
         </form>
 
         <h1>Subscribe</h1>
-        <form>
-            <input type="email" placeholder="Enter your email" required/>
+        <form id="subscriptionForm">
+            <input type="email" id="email" placeholder="Enter your email" required/>
             <button type="submit">Subscribe</button>
         </form>
+
+        <h1>Events</h1>
+        <ul id="eventsList">
+            <li>Loading events...</li>
+        </ul>
 
         <script src="./script.js"></script>
     </body>
