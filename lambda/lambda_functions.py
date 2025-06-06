@@ -63,4 +63,33 @@ def create_events_handler(events, context):
             'statusCode': 500,
             'body' : json.dumps({'error': 'Internal server error'})
         }
+    
+    
+def subscribe_handler(events, context):
+    try:
+        body = json.loads(events['body'])
+        email = body['email']
 
+        if not email:
+            return {
+                'statusCode': 400,
+                'body': json.dumps({'error': 'Email is required'})
+            }
+        
+        sns.subscribe(
+            TopicArn=TOPIC_ARN,
+            Protocol='email',
+            Endpoint=email
+        )
+
+        return {
+            'statusCode': 200,
+            'body': json.dumps({'message': 'Subscription successful. Please check your email to confirm subscription.'})
+        }
+    
+    except Exception as e:
+        logger.error(f"Error subscribing email: {e}")
+        return {
+            'statusCode': 500,
+            'body': json.dumps({'error': 'Internal server error'})
+        }
