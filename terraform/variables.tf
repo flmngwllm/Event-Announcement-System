@@ -3,5 +3,5 @@ variable "REGION" {
 }
 
 variable "BUCKET_NAME" {
-  default = "event_annoucement_bucket232"
+  default = "event-annoucement-bucket232"
 }
