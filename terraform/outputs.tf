@@ -1,6 +1,5 @@
-output "api_gateway_base_url" {
-  value       = "${aws_api_gateway_deployment.deploy.invoke_url}/${aws_api_gateway_stage.Prod_stage.stage_name}"
-  description = "Base URL for API Gateway"
+output "api_gateway_url" {
+  value = "https://${aws_api_gateway_rest_api.api.id}.execute-api.${var.REGION}.amazonaws.com/${aws_api_gateway_stage.Prod_stage.stage_name}"
 }
 
 output "s3_website_url" {
