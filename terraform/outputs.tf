@@ -4,6 +4,6 @@ output "api_gateway_base_url" {
 }
 
 output "s3_website_url" {
-  value = aws_s3_bucket.your_bucket_name.website_endpoint
+  value = aws_s3_bucket.event_announcement.website_endpoint
   description = "URL of the S3 static website"
 }
