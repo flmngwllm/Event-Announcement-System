@@ -3,6 +3,7 @@ output "api_gateway_url" {
 }
 
 output "s3_website_url" {
-  value       = aws_s3_bucket.event_announcement.website_endpoint
-  description = "URL of the S3 static website"
+  value = "http://${aws_s3_bucket.event_announcement.bucket}.s3-website-${var.REGION}.amazonaws.com"
 }
+
+

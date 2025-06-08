@@ -15,6 +15,15 @@ BUCKET_NAME = os.environ.get("BUCKET_NAME", "event_announce")
 TOPIC_ARN = os.environ.get("TOPIC_ARN", "arn placehoder")
 Events_File = "events.json"
 
+def build_response(status_code, body):
+    return {
+        'statusCode': status_code,
+        'headers': {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        },
+        'body': json.dumps(body) if not isinstance(body, str) else body
+    }
 
 def upload_file_to_s3(bucket_name, file_name, file_content):
     try:
@@ -32,10 +41,7 @@ def create_events_handler(events, context):
         eventDate = body['date']
 
         if not (eventId and eventName and eventDate):
-            return {
-                'statusCode' : 400,
-                'body': json.dumps({'error': 'Missing required fields: id, name, or date'})
-            }
+            return build_response(400, {'error': 'Missing required fields: id, name, or date'})
         try:
             response = s3_client.get_object(Bucket=BUCKET_NAME, Key=Events_File)
             existing_events = json.loads(response['Body'].read())
@@ -53,28 +59,19 @@ def create_events_handler(events, context):
         updated_json = json.dumps(existing_events, indent=2)
         upload_file_to_s3(BUCKET_NAME, Events_File, updated_json)
 
-        return {
-            'statusCode': 200,       
-            'body': json.dumps({'message': 'Event has been successfully created'})
-            }
+        return build_response(200, {'message': 'Event has been successfully created'})
     except Exception as e:
         logger.error(f"Error creating event: {e}")
-        return {
-            'statusCode': 500,
-            'body' : json.dumps({'error': 'Internal server error'})
-        }
+        return build_response(500, {'error': 'Internal server error'})
     
-    
+
 def subscribe_handler(events, context):
     try:
         body = json.loads(events['body'])
         email = body['email']
 
         if not email:
-            return {
-                'statusCode': 400,
-                'body': json.dumps({'error': 'Email is required'})
-            }
+            return build_response(400, {'error': 'Email is required'})
         
         sns.subscribe(
             TopicArn=TOPIC_ARN,
@@ -82,14 +79,22 @@ def subscribe_handler(events, context):
             Endpoint=email
         )
 
-        return {
-            'statusCode': 200,
-            'body': json.dumps({'message': 'Subscription successful. Please check your email to confirm subscription.'})
-        }
+        return build_response(200, {'message': 'Subscription successful. Please check your email to confirm subscription.'})
     
     except Exception as e:
         logger.error(f"Error subscribing email: {e}")
-        return {
-            'statusCode': 500,
-            'body': json.dumps({'error': 'Internal server error'})
-        }
+        return build_response(500, {'error': 'Internal server error'})
+
+
+def get_events_handler(event, context):
+    try:
+        response = s3_client.get_object(Bucket=BUCKET_NAME, Key=Events_File)
+        events_data = response['Body'].read().decode('utf-8')
+        return build_response(200, events_data)
+
+    except s3_client.exceptions.NoSuchKey:
+        return build_response(200, '[]')
+
+    except Exception as e:
+        logger.error(f"Error fetching events: {e}")
+        return build_response(500, {'error': 'Internal server error'})

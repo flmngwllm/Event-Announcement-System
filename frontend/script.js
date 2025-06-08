@@ -1,4 +1,14 @@
+let apiBaseUrl = '';
 
+fetch('./config.json')
+  .then(response => response.json())
+  .then(config => {
+    apiBaseUrl = config.apiBaseUrl;
+    // Now you can use apiBaseUrl + '/create-event', etc.
+  });
+
+
+// Function to handle event form submission
 document.getElementById('eventForm').addEventListener('submit', function(e) {
     e.preventDefault();
 
@@ -15,7 +25,7 @@ const payload = {
 }
 
 
-fetch('url', {
+fetch(`${apiBaseUrl}/new_events`, {
     method: 'PUT',
     headers: {
         'Content-Type': 'application/json'
@@ -44,7 +54,7 @@ document.getElementById('subscriptionForm').addEventListener('submit', function(
 
 const email = document.getElementById('email').value
 
-fetch('url', {
+fetch(`${apiBaseUrl}/subscribe`, {
     method: 'PUT',
     headers: {
         'Content-Type': 'application/json'
@@ -65,7 +75,7 @@ fetch('url', {
 
 // function to Get List of events
 function getEvents(){
-    fetch('url',{
+    fetch(`${apiBaseUrl}/events`,{
         method: 'GET',
 
     }).then(response => {

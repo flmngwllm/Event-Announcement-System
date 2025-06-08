@@ -31,7 +31,7 @@ data "aws_iam_policy_document" "lambda_policy" {
     ]
 
   }
-  
+
 
   statement {
     effect = "Allow"
@@ -94,6 +94,20 @@ resource "aws_lambda_function" "subscribe" {
   runtime = "python3.12"
 }
 
+
+resource "aws_lambda_function" "events" {
+  # If the file is not in the current working directory you will need to include a
+  # path.module in the filename.
+  filename      = "lambda.zip"
+  function_name = "get_events_function"
+  role          = aws_iam_role.event_lambda.arn
+  handler       = "get_events_handler"
+
+  source_code_hash = data.archive_file.lambda_archive.output_base64sha256
+
+  runtime = "python3.12"
+}
+
 resource "aws_lambda_permission" "create_events_permission" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
@@ -110,4 +124,12 @@ resource "aws_lambda_permission" "subscribe_permission" {
   function_name = aws_lambda_function.subscribe.function_name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_api_gateway_rest_api.api.execution_arn}/${aws_api_gateway_stage.Prod_stage.stage_name}/PUT/subscribe"
+}
+
+resource "aws_lambda_permission" "events_permission" {
+  statement_id  = "AllowExecutionFromAPIGateway"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.events.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.api.execution_arn}/${aws_api_gateway_stage.Prod_stage.stage_name}/GET/events"
 }

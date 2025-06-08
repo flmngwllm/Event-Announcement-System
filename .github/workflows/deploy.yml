@@ -1,0 +1,48 @@
+name: Deploy Application (Lambda + Frontend)
+
+on:
+  workflow_run:
+    workflows: ["Terraform Infrastructure"]
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  deploy-app:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}      
+           
+      - name: AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Zip Lambda Function
+        run: zip -r lambda.zip lambda/
+
+      - name: Upload Lambda to S3
+        run: |
+          BUCKET_NAME=willofleming-event-annoucement-bucket
+          if aws s3 ls "s3://$BUCKET_NAME/" 2>&1 | grep -q 'NoSuchBucket'; then
+            echo "Bucket does not exist"
+          else
+            aws s3 cp lambda.zip s3://$BUCKET_NAME/lambda/lambda.zip
+          fi
+
+      - name: Generate config.json from Terraform Output
+        run: |
+          cd terraform
+          terraform init -input=false
+          API_URL=$(terraform output -raw api_gateway_url)
+          echo "{\"apiBaseUrl\": \"$API_URL\"}" > ../frontend/config.json
+
+      - name: Deploy Frontend to S3
+        run: |
+          aws s3 sync frontend/ s3://willofleming-event-annoucement-bucket/ --delete

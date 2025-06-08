@@ -4,6 +4,7 @@
 *.tfstate.*
 terraform.tfstate
 terraform.tfstate.backup
+crash.log
 
 # Lambda build files
 *.zip
