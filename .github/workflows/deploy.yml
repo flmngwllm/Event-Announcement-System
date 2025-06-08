@@ -34,7 +34,7 @@ jobs:
           aws-region: us-east-1
 
       - name: Zip Lambda Function
-        run: zip -r lambda.zip lambda/lambda_functions.py
+        run: zip -j lambda.zip lambda/lambda_functions.py
 
       - name: Upload Lambda to S3
         run: |

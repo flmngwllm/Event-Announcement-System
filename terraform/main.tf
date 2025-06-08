@@ -19,10 +19,4 @@ provider "aws" {
   region = var.REGION
 }
 
-resource "local_file" "frontend_api_config" {
-  content = jsonencode({
-    apiBaseUrl = "https://${aws_api_gateway_rest_api.api.id}.execute-api.${var.REGION}.amazonaws.com/${aws_api_gateway_stage.Prod_stage.stage_name}"
-  })
-  filename = "${path.module}/../frontend/config.json"
-}
 
