@@ -3,5 +3,5 @@ variable "REGION" {
 }
 
 variable "BUCKET_NAME" {
-  default = "willofleming-event-annoucement-bucket"
+  default = "willofleming-event-announcement-bucket"
 }

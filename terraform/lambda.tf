@@ -78,6 +78,12 @@ resource "aws_lambda_function" "create_events" {
   source_code_hash = data.archive_file.lambda_archive.output_base64sha256
 
   runtime = "python3.12"
+  environment {
+    variables = {
+      BUCKET_NAME = var.BUCKET_NAME
+      TOPIC_ARN   = aws_sns_topic.sns_event_announce.arn
+    }
+  }
 }
 
 
@@ -92,6 +98,12 @@ resource "aws_lambda_function" "subscribe" {
   source_code_hash = data.archive_file.lambda_archive.output_base64sha256
 
   runtime = "python3.12"
+  environment {
+    variables = {
+      BUCKET_NAME = var.BUCKET_NAME
+      TOPIC_ARN   = aws_sns_topic.sns_event_announce.arn
+    }
+  }
 }
 
 
@@ -106,6 +118,12 @@ resource "aws_lambda_function" "events" {
   source_code_hash = data.archive_file.lambda_archive.output_base64sha256
 
   runtime = "python3.12"
+
+  environment {
+    variables = {
+      BUCKET_NAME = var.BUCKET_NAME
+    }
+  }
 }
 
 resource "aws_lambda_permission" "create_events_permission" {

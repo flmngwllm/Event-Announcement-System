@@ -29,7 +29,7 @@ jobs:
 
       - name: Upload Lambda to S3
         run: |
-          BUCKET_NAME=willofleming-event-annoucement-bucket
+          BUCKET_NAME=willofleming-event-announcement-bucket
           if aws s3 ls "s3://$BUCKET_NAME/" 2>&1 | grep -q 'NoSuchBucket'; then
             echo "Bucket does not exist"
           else
@@ -45,4 +45,4 @@ jobs:
 
       - name: Deploy Frontend to S3
         run: |
-          aws s3 sync ../frontend/ s3://willofleming-event-annoucement-bucket/ --delete
+          aws s3 sync ../frontend/ s3://willofleming-event-announcement-bucket/ --delete

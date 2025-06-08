@@ -11,8 +11,8 @@ logger = logging.getLogger()
 logger.setLevel("INFO")
 
 
-BUCKET_NAME = os.environ.get("BUCKET_NAME", "event_announce")
-TOPIC_ARN = os.environ.get("TOPIC_ARN", "arn placehoder")
+BBUCKET_NAME = os.environ["BUCKET_NAME"]
+TOPIC_ARN = os.environ.get("TOPIC_ARN")
 Events_File = "events.json"
 
 def build_response(status_code, body):
