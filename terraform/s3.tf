@@ -25,6 +25,7 @@ resource "aws_s3_bucket_policy" "event_announcement_policy" {
 
 data "aws_iam_policy_document" "event_policy_document" {
   statement {
+    sid    = "PublicReadGetObject"
     principals {
       type        = "AWS"
       identifiers = ["*"]
@@ -38,6 +39,24 @@ data "aws_iam_policy_document" "event_policy_document" {
       "${aws_s3_bucket.event_announcement.arn}/*",
     ]
     effect = "Allow"
+  }
+
+  statement {
+    sid    = "AllowUploadsFromGitHubActions"
+    effect = "Allow"
+
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::831274730062:user/event-notify"] 
+    }
+
+    actions = [
+      "s3:PutObject"
+    ]
+
+    resources = [
+      "${aws_s3_bucket.event_announcement.arn}/*"
+    ]
   }
 }
 

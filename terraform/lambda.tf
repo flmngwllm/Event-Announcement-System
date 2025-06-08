@@ -73,7 +73,7 @@ resource "aws_lambda_function" "create_events" {
   filename      = "lambda.zip"
   function_name = "create_events_function"
   role          = aws_iam_role.event_lambda.arn
-  handler       = "create_events_handler"
+  handler       = "lambda_functions.create_events_handler"
 
   source_code_hash = data.archive_file.lambda_archive.output_base64sha256
 
@@ -93,7 +93,7 @@ resource "aws_lambda_function" "subscribe" {
   filename      = "lambda.zip"
   function_name = "subscribe_function"
   role          = aws_iam_role.event_lambda.arn
-  handler       = "subscribe_handler"
+  handler       = "lambda_functions.subscribe_handler"
 
   source_code_hash = data.archive_file.lambda_archive.output_base64sha256
 
@@ -114,7 +114,7 @@ resource "aws_lambda_function" "events" {
   filename      = "lambda.zip"
   function_name = "get_events_function"
   role          = aws_iam_role.event_lambda.arn
-  handler       = "get_events_handler"
+  handler       = "lambda_functions.get_events_handler"
 
   source_code_hash = data.archive_file.lambda_archive.output_base64sha256
 
