@@ -12,10 +12,19 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
+      - name: Download commit SHA
+        uses: actions/download-artifact@v4
+        with:
+          name: commit-sha
+
+      - name: Read commit SHA
+        id: sha
+        run: echo "sha=$(cat commit-sha.txt)" >> $GITHUB_OUTPUT
+
       - name: Checkout source code
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.workflow_run.head_sha }}      
+          ref: ${{ steps.sha.outputs.sha }}    
 
       - name: AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
