@@ -50,8 +50,13 @@ jobs:
           cd terraform
           terraform init -input=false -backend=false
           API_URL=$(terraform output -raw api_gateway_url)
+          echo "✅ API_URL = $API_URL"
           echo "{\"apiBaseUrl\": \"$API_URL\"}" > ../frontend/config.json
+          echo "✅ config.json written:"
+          cat ../frontend/config.json
 
       - name: Deploy Frontend to S3
         run: |
+          ls -l frontend
+          cat frontend/config.json || echo "❌ config.json missing"
           aws s3 sync frontend/ s3://willofleming-event-announcement-bucket/ --delete
