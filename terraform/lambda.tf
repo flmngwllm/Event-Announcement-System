@@ -86,7 +86,6 @@ resource "aws_lambda_function" "create_events" {
   }
 }
 
-
 resource "aws_lambda_function" "subscribe" {
   # If the file is not in the current working directory you will need to include a
   # path.module in the filename.

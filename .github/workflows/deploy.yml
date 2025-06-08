@@ -34,7 +34,7 @@ jobs:
           aws-region: us-east-1
 
       - name: Zip Lambda Function
-        run: zip -r lambda.zip lambda/
+        run: zip -r lambda.zip lambda/lambda_functions.py
 
       - name: Upload Lambda to S3
         run: |
@@ -48,7 +48,11 @@ jobs:
       - name: Generate config.json from Terraform Output
         run: |
           cd terraform
-          terraform init -input=false 
+          terraform init -input=false \
+          -backend-config="bucket=willofleming-terraform-state" \
+          -backend-config="key=prod/terraform.tfstate" \
+          -backend-config="region=us-east-1" \
+          -backend-config="dynamodb_table=terraform-locks" 
           API_URL=$(terraform output -raw api_gateway_url)
           echo "✅ API_URL = $API_URL"
           echo "{\"apiBaseUrl\": \"$API_URL\"}" > ../frontend/config.json
@@ -57,6 +61,8 @@ jobs:
 
       - name: Deploy Frontend to S3
         run: |
+          echo "✅ Frontend folder contents:"
           ls -l frontend
+          echo "✅ config.json contents:"
           cat frontend/config.json || echo "❌ config.json missing"
           aws s3 sync frontend/ s3://willofleming-event-announcement-bucket/ --delete
