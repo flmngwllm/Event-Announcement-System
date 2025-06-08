@@ -18,6 +18,8 @@ resource "aws_s3_bucket_public_access_block" "public_access" {
 resource "aws_s3_bucket_policy" "event_announcement_policy" {
   bucket = aws_s3_bucket.event_announcement.id
   policy = data.aws_iam_policy_document.event_policy_document.json
+
+  depends_on = [aws_s3_bucket_public_access_block.public_access]
 }
 
 data "aws_iam_policy_document" "event_policy_document" {
