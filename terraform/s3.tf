@@ -52,5 +52,9 @@ resource "aws_s3_bucket_website_configuration" "website" {
   error_document {
     key = "error.html"
   }
+}
 
+resource "aws_s3_bucket_acl" "allow_read" {
+  bucket = aws_s3_bucket.event_announcement.id
+  acl    = "public-read"
 }
