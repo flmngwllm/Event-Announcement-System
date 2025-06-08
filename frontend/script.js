@@ -7,7 +7,6 @@ fetch('./config.json')
     // Now you can use apiBaseUrl + '/create-event', etc.
   });
 
-
 // Function to handle event form submission
 document.getElementById('eventForm').addEventListener('submit', function(e) {
     e.preventDefault();

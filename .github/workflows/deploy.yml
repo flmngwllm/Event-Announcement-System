@@ -24,7 +24,8 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
         with:
-          ref: ${{ steps.sha.outputs.sha }}    
+          ref: ${{ steps.sha.outputs.sha }}
+          fetch-depth: 0    
 
       - name: AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
