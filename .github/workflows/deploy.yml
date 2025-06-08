@@ -48,7 +48,7 @@ jobs:
       - name: Generate config.json from Terraform Output
         run: |
           cd terraform
-          terraform init -input=false -backend=false
+          terraform init -input=false 
           API_URL=$(terraform output -raw api_gateway_url)
           echo "✅ API_URL = $API_URL"
           echo "{\"apiBaseUrl\": \"$API_URL\"}" > ../frontend/config.json
