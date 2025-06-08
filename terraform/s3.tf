@@ -40,6 +40,7 @@ data "aws_iam_policy_document" "event_policy_document" {
   }
 }
 
+
 resource "aws_s3_bucket_website_configuration" "website" {
   bucket = aws_s3_bucket.event_announcement.id
 

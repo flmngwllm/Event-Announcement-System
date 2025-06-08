@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.workflow_run.head_sha }}      
-           
+
       - name: AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -39,10 +39,10 @@ jobs:
       - name: Generate config.json from Terraform Output
         run: |
           cd terraform
-          terraform init -input=false
+          terraform init -input=false -backend=false
           API_URL=$(terraform output -raw api_gateway_url)
           echo "{\"apiBaseUrl\": \"$API_URL\"}" > ../frontend/config.json
 
       - name: Deploy Frontend to S3
         run: |
-          aws s3 sync frontend/ s3://willofleming-event-annoucement-bucket/ --delete
+          aws s3 sync ../frontend/ s3://willofleming-event-annoucement-bucket/ --delete
