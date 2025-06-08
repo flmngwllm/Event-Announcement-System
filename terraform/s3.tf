@@ -25,7 +25,7 @@ resource "aws_s3_bucket_policy" "event_announcement_policy" {
 
 data "aws_iam_policy_document" "event_policy_document" {
   statement {
-    sid    = "PublicReadGetObject"
+    sid = "PublicReadGetObject"
     principals {
       type        = "AWS"
       identifiers = ["*"]
@@ -47,7 +47,7 @@ data "aws_iam_policy_document" "event_policy_document" {
 
     principals {
       type        = "AWS"
-      identifiers = ["arn:aws:iam::831274730062:user/event-notify"] 
+      identifiers = ["arn:aws:iam::831274730062:user/event-notify"]
     }
 
     actions = [
