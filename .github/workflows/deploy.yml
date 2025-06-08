@@ -50,7 +50,7 @@ jobs:
           cd terraform
           terraform init -input=false \
           -backend-config="bucket=willofleming-terraform-state" \
-          -backend-config="key=prod/terraform.tfstate" \
+          -backend-config="key=state/terraform.tfstate" \
           -backend-config="region=us-east-1" \
           -backend-config="dynamodb_table=terraform-locks" 
           API_URL=$(terraform output -raw api_gateway_url)
