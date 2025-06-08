@@ -61,5 +61,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: commit-sha
-          path: commit-sha.txt
+          path: terraform/commit-sha.txt
 
