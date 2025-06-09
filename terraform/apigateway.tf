@@ -58,6 +58,11 @@ resource "aws_api_gateway_method_response" "events_options_response" {
 }
 
 resource "aws_api_gateway_integration_response" "events_options_integration_response" {
+  depends_on = [
+    aws_api_gateway_method.events_options,
+    aws_api_gateway_integration.events_options_integration
+  ]
+
   rest_api_id = aws_api_gateway_rest_api.api.id
   resource_id = aws_api_gateway_resource.events.id
   http_method = "OPTIONS"
@@ -126,6 +131,10 @@ resource "aws_api_gateway_method_response" "new_events_options_response" {
 }
 
 resource "aws_api_gateway_integration_response" "new_events_options_integration_response" {
+  depends_on = [
+    aws_api_gateway_method.new_events_options,
+    aws_api_gateway_integration.new_events_options_integration
+  ]
   rest_api_id = aws_api_gateway_rest_api.api.id
   resource_id = aws_api_gateway_resource.new_events.id
   http_method = "OPTIONS"
@@ -184,6 +193,7 @@ resource "aws_api_gateway_integration" "subscribe_options_integration" {
 }
 
 resource "aws_api_gateway_method_response" "subscribe_options_response" {
+
   rest_api_id = aws_api_gateway_rest_api.api.id
   resource_id = aws_api_gateway_resource.subscribe.id
   http_method = "OPTIONS"
@@ -196,6 +206,10 @@ resource "aws_api_gateway_method_response" "subscribe_options_response" {
 }
 
 resource "aws_api_gateway_integration_response" "subscribe_options_integration_response" {
+  depends_on = [
+    aws_api_gateway_method.subscribe_options,
+    aws_api_gateway_integration.subscribe_options_integration
+  ]
   rest_api_id = aws_api_gateway_rest_api.api.id
   resource_id = aws_api_gateway_resource.subscribe.id
   http_method = "OPTIONS"
