@@ -26,6 +26,7 @@ resource "aws_api_gateway_integration" "events_get_integration" {
   integration_http_method = "POST"
 }
 
+
 resource "aws_api_gateway_resource" "new_events" {
   parent_id   = aws_api_gateway_rest_api.api.root_resource_id
   path_part   = "new_events"

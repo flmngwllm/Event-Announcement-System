@@ -54,13 +54,13 @@ jobs:
 
       - name: Save commit SHA for next workflow
         if: github.event_name != 'pull_request'
-        run: echo "${GITHUB_SHA}" > terraform/commit-sha.txt
+        run: echo "${GITHUB_SHA}" > commit-sha.txt
 
       - name: Upload commit SHA as artifact
         if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v4
         with:
           name: commit-sha
-          path: terraform/commit-sha.txt
+          path: commit-sha.txt
 
 
