@@ -7,5 +7,3 @@ output "s3_website_url" {
   value = "http://${aws_s3_bucket.event_announcement.bucket}.s3-website-${var.REGION}.amazonaws.com"
 }
 
-
-
