@@ -38,21 +38,6 @@ jobs:
           echo "📁 Frontend folder:"
           ls -l frontend
 
-      - name: Zip Lambda function
-        run: |
-          echo "Zipping lambda_functions.py from $(pwd)..."
-          ls -l lambda
-          zip lambda.zip lambda/lambda_functions.py
-          echo "✅ lambda.zip created in root:"
-          ls -l lambda.zip
-
-      - name: Upload Lambda to S3
-        run: |
-          set -e
-          BUCKET_NAME=willofleming-event-announcement-bucket
-          echo "Uploading lambda.zip to S3..."
-          aws s3 cp lambda.zip s3://$BUCKET_NAME/lambda/lambda.zip --debug
-
       - name: Generate config.json from Terraform output
         run: |
           cd terraform
