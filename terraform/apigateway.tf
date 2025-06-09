@@ -139,7 +139,7 @@ resource "aws_api_gateway_method_response" "new_events_options_response" {
 
 resource "aws_api_gateway_integration_response" "new_events_options_integration_response" {
   depends_on = [
-    aws_api_gateway_method.new_events_options_response,
+    aws_api_gateway_method_response.new_events_options_response,
     aws_api_gateway_integration.new_events_options_integration
   ]
   rest_api_id = aws_api_gateway_rest_api.api.id
