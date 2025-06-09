@@ -55,6 +55,7 @@ data "aws_iam_policy_document" "event_policy_document" {
       "s3:PutObjectAcl"
     ]
 
+
     resources = [
       "${aws_s3_bucket.event_announcement.arn}/*"
     ]

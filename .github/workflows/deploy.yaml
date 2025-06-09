@@ -13,21 +13,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Download commit SHA
-        uses: actions/download-artifact@v4
-        with:
-          name: commit-sha
-          path: .
-
-
-      - name: Read commit SHA
-        id: sha
-        run: echo "sha=$(cat commit-sha.txt)" >> $GITHUB_OUTPUT
-
-      - name: Checkout source code
+      - name: Checkout source code from triggering commit
         uses: actions/checkout@v4
         with:
-          ref: ${{ steps.sha.outputs.sha }}
+          ref: ${{ github.event.workflow_run.head_sha }}
           fetch-depth: 0
 
       - name: Set up AWS Credentials
@@ -93,3 +82,4 @@ jobs:
           echo "config.json:"
           cat frontend/config.json || { echo "❌ config.json missing"; exit 1; }
           aws s3 sync frontend/ s3://willofleming-event-announcement-bucket/ --delete --debug
+
