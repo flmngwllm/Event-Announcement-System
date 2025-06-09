@@ -41,9 +41,10 @@ jobs:
       - name: Zip Lambda function
         run: |
           echo "Zipping lambda_functions.py from $(pwd)..."
-          zip ../lambda.zip lambda_functions.py
+          ls -l lambda
+          zip lambda.zip lambda/lambda_functions.py
           echo "✅ lambda.zip created in root:"
-          ls -l ../lambda.zip
+          ls -l lambda.zip
 
       - name: Upload Lambda to S3
         run: |

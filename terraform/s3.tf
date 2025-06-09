@@ -41,6 +41,7 @@ data "aws_iam_policy_document" "event_policy_document" {
     effect = "Allow"
   }
 
+
   statement {
     sid    = "AllowUploadsFromGitHubActions"
     effect = "Allow"
