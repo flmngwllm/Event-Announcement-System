@@ -17,6 +17,7 @@ resource "aws_s3_bucket_cors_configuration" "frontend_cors" {
   }
 }
 
+
 resource "aws_s3_bucket_public_access_block" "public_access" {
   bucket = aws_s3_bucket.event_announcement.id
 

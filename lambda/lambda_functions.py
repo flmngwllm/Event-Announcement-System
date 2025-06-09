@@ -46,7 +46,7 @@ def create_events_handler(events, context):
             return build_response(400, {'error': 'Missing required fields: id, name, or date'})
         try:
             response = s3_client.get_object(Bucket=BUCKET_NAME, Key=Events_File)
-            existing_events = json.loads(response['Body'].read())
+            existing_events = json.loads(response['Body'].read().decode('utf-8'))
         except s3_client.exceptions.NoSuchKey:
             existing_events = []
         
@@ -69,11 +69,13 @@ def create_events_handler(events, context):
 
 def subscribe_handler(events, context):
     try:
-        body = json.loads(events['body'])
-        email = body['email']
-
+        body = json.loads(events.get('body', '{}'))
+        email = body.get('email')
         if not email:
             return build_response(400, {'error': 'Email is required'})
+
+        if not TOPIC_ARN:
+            return build_response(500, {'error': 'TOPIC_ARN environment variable not set'})
         
         sns.subscribe(
             TopicArn=TOPIC_ARN,
@@ -92,7 +94,7 @@ def get_events_handler(events, context):
     try:
         response = s3_client.get_object(Bucket=BUCKET_NAME, Key=Events_File)
         events_data = response['Body'].read().decode('utf-8')
-        return build_response(200, events_data)
+        return build_response(200, json.loads(events_data))
 
     except s3_client.exceptions.NoSuchKey:
         return build_response(200, '[]')
