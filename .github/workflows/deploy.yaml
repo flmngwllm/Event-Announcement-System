@@ -26,6 +26,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
+      - name: Terraform Setup
+        uses: hashicorp/setup-terraform@v3
+        
       - name: Verify directory structure
         run: |
           echo "📁 Root contents:"
