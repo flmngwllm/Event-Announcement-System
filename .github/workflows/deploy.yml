@@ -11,6 +11,7 @@ jobs:
   deploy-app:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
+
     steps:
       - name: Download commit SHA
         uses: actions/download-artifact@v4
@@ -25,54 +26,61 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ steps.sha.outputs.sha }}
-          fetch-depth: 0    
+          fetch-depth: 0
 
-      - name: AWS Credentials
+      - name: Set up AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Zip Lambda Function
-        run: zip -j lambda.zip lambda/lambda_functions.py
+      - name: Verify directory structure
+        run: |
+          echo "📁 Root contents:"
+          ls -l
+          echo "📁 Lambda folder:"
+          ls -l lambda
+          echo "📁 Frontend folder:"
+          ls -l frontend
+
+      - name: Zip Lambda function
+        run: |
+          zip -j lambda.zip lambda/lambda_functions.py
+          echo "✅ Lambda zip created:"
+          ls -lh lambda.zip
 
       - name: Upload Lambda to S3
         run: |
           BUCKET_NAME=willofleming-event-announcement-bucket
-          if aws s3 ls "s3://$BUCKET_NAME/" 2>&1 | grep -q 'NoSuchBucket'; then
-            echo "Bucket does not exist"
-          else
-            aws s3 cp lambda.zip s3://$BUCKET_NAME/lambda/lambda.zip
-          fi
+          echo "Uploading lambda.zip to S3..."
+          aws s3 cp lambda.zip s3://$BUCKET_NAME/lambda/lambda.zip --debug
 
-      - name: Generate config.json from Terraform Output
+      - name: Generate config.json from Terraform output
         run: |
           cd terraform
           terraform init -input=false \
-          -backend-config="bucket=willofleming-terraform-state" \
-          -backend-config="key=state/terraform.tfstate" \
-          -backend-config="region=us-east-1" \
-          -backend-config="dynamodb_table=terraform-locks" 
+            -backend-config="bucket=willofleming-terraform-state" \
+            -backend-config="key=state/terraform.tfstate" \
+            -backend-config="region=us-east-1" \
+            -backend-config="dynamodb_table=terraform-locks"
+
           API_URL=$(terraform output -raw api_gateway_url)
-          echo "✅ API_URL = $API_URL"
+          echo "✅ API_URL from Terraform: $API_URL"
+
           echo "{\"apiBaseUrl\": \"$API_URL\"}" > ../frontend/config.json
-          echo "✅ config.json written:"
-          cat ../frontend/config.json
-      
-      - name: Debug file presence
-        run: |
-          echo "Listing lambda.zip"
-          ls -l
-          echo "Listing frontend/"
-          ls -l frontend
-          echo "Listing frontend/config.json"
-          cat frontend/config.json || echo "Missing"
-      
-      - name: Deploy Frontend to S3
-        run: |
-          echo "✅ Frontend folder contents:"
-          ls -l frontend
           echo "✅ config.json contents:"
-          cat frontend/config.json || echo "❌ config.json missing"
-          aws s3 sync frontend/ s3://willofleming-event-announcement-bucket/ --delete
+          cat ../frontend/config.json
+
+      - name: Final check before deploy
+        run: |
+          echo "🔍 Checking files before S3 sync:"
+          find frontend
+          test -f frontend/index.html || { echo "❌ index.html missing"; exit 1; }
+          test -f frontend/script.js || { echo "❌ script.js missing"; exit 1; }
+          test -f frontend/config.json || { echo "❌ config.json missing"; exit 1; }
+
+      - name: Deploy frontend to S3
+        run: |
+          echo "🚀 Syncing frontend to S3..."
+          aws s3 sync frontend/ s3://willofleming-event-announcement-bucket/ --delete --debug
