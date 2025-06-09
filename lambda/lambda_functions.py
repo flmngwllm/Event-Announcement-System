@@ -11,7 +11,7 @@ logger = logging.getLogger()
 logger.setLevel("INFO")
 
 
-BBUCKET_NAME = os.environ["BUCKET_NAME"]
+BUCKET_NAME = os.environ["BUCKET_NAME"]
 TOPIC_ARN = os.environ.get("TOPIC_ARN")
 Events_File = "events.json"
 

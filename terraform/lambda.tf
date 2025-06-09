@@ -60,8 +60,8 @@ resource "aws_iam_role_policy_attachment" "lambda_s3_policy_attachment" {
 
 data "archive_file" "lambda_archive" {
   type        = "zip"
-  source_file = "../lambda/lambda_functions.py"
-  output_path = "lambda.zip"
+  source_file = "${path.module}/../lambda/lambda_functions.py"
+  output_path = "${path.module}/lambda.zip"
 }
 
 
@@ -70,7 +70,7 @@ data "archive_file" "lambda_archive" {
 resource "aws_lambda_function" "create_events" {
   # If the file is not in the current working directory you will need to include a
   # path.module in the filename.
-  filename      = "lambda.zip"
+  filename      = "${path.module}/lambda.zip"
   function_name = "create_events_function"
   role          = aws_iam_role.event_lambda.arn
   handler       = "lambda_functions.create_events_handler"
@@ -89,7 +89,7 @@ resource "aws_lambda_function" "create_events" {
 resource "aws_lambda_function" "subscribe" {
   # If the file is not in the current working directory you will need to include a
   # path.module in the filename.
-  filename      = "lambda.zip"
+  filename      = "${path.module}/lambda.zip"
   function_name = "subscribe_function"
   role          = aws_iam_role.event_lambda.arn
   handler       = "lambda_functions.subscribe_handler"
@@ -109,7 +109,7 @@ resource "aws_lambda_function" "subscribe" {
 resource "aws_lambda_function" "events" {
   # If the file is not in the current working directory you will need to include a
   # path.module in the filename.
-  filename      = "lambda.zip"
+  filename      = "${path.module}/lambda.zip"
   function_name = "get_events_function"
   role          = aws_iam_role.event_lambda.arn
   handler       = "lambda_functions.get_events_handler"
