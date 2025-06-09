@@ -59,7 +59,16 @@ jobs:
           echo "{\"apiBaseUrl\": \"$API_URL\"}" > ../frontend/config.json
           echo "✅ config.json written:"
           cat ../frontend/config.json
-
+      
+      - name: Debug file presence
+        run: |
+          echo "Listing lambda.zip"
+          ls -l
+          echo "Listing frontend/"
+          ls -l frontend
+          echo "Listing frontend/config.json"
+          cat frontend/config.json || echo "Missing"
+      
       - name: Deploy Frontend to S3
         run: |
           echo "✅ Frontend folder contents:"

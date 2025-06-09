@@ -84,7 +84,7 @@ function getEvents(){
     return response.json()
     
 }).then(data =>{
-    list = document.getElementById('eventList')
+    list = document.getElementById('eventsList')
     list.innerHTML = '';
     data.forEach(event =>{
         const item = document.createElement('li');
