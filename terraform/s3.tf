@@ -53,7 +53,7 @@ data "aws_iam_policy_document" "event_policy_document" {
     actions = [
       "s3:PutObject",
       "s3:PutObjectAcl",
-    "s3:ListBucket"
+      "s3:ListBucket"
     ]
 
     resources = [
