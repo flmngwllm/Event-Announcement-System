@@ -46,12 +46,15 @@ jobs:
 
       - name: Zip Lambda function
         run: |
+          echo "Lambda folder contents:"
+          ls -l lambda
           zip -j lambda.zip lambda/lambda_functions.py
-          echo "✅ Lambda zip created:"
-          ls -lh lambda.zip
+          echo "Zipped contents:"
+          ls -l lambda.zip
 
       - name: Upload Lambda to S3
         run: |
+          set -e
           BUCKET_NAME=willofleming-event-announcement-bucket
           echo "Uploading lambda.zip to S3..."
           aws s3 cp lambda.zip s3://$BUCKET_NAME/lambda/lambda.zip --debug
@@ -82,5 +85,9 @@ jobs:
 
       - name: Deploy frontend to S3
         run: |
-          echo "🚀 Syncing frontend to S3..."
+          set -e
+          echo "Frontend folder contents:"
+          ls -l frontend
+          echo "config.json:"
+          cat frontend/config.json || { echo "❌ config.json missing"; exit 1; }
           aws s3 sync frontend/ s3://willofleming-event-announcement-bucket/ --delete --debug
