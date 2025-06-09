@@ -55,11 +55,15 @@ resource "aws_api_gateway_method_response" "events_options_response" {
     "method.response.header.Access-Control-Allow-Methods" = true
     "method.response.header.Access-Control-Allow-Origin"  = true
   }
+
+  depends_on = [
+    aws_api_gateway_method.events_options
+  ]
 }
 
 resource "aws_api_gateway_integration_response" "events_options_integration_response" {
   depends_on = [
-    aws_api_gateway_method.events_options,
+    aws_api_gateway_method_response.events_options_response,
     aws_api_gateway_integration.events_options_integration
   ]
 
@@ -128,11 +132,14 @@ resource "aws_api_gateway_method_response" "new_events_options_response" {
     "method.response.header.Access-Control-Allow-Methods" = true
     "method.response.header.Access-Control-Allow-Origin"  = true
   }
+  depends_on = [
+    aws_api_gateway_method.new_events_options
+  ]
 }
 
 resource "aws_api_gateway_integration_response" "new_events_options_integration_response" {
   depends_on = [
-    aws_api_gateway_method.new_events_options,
+    aws_api_gateway_method.new_events_options_response,
     aws_api_gateway_integration.new_events_options_integration
   ]
   rest_api_id = aws_api_gateway_rest_api.api.id
@@ -203,13 +210,16 @@ resource "aws_api_gateway_method_response" "subscribe_options_response" {
     "method.response.header.Access-Control-Allow-Methods" = true
     "method.response.header.Access-Control-Allow-Origin"  = true
   }
+  depends_on = [
+    aws_api_gateway_method.subscribe_options
+  ]
 }
 
 resource "aws_api_gateway_integration_response" "subscribe_options_integration_response" {
   depends_on = [
-    aws_api_gateway_method.subscribe_options,
-    aws_api_gateway_integration.subscribe_options_integration
-  ]
+  aws_api_gateway_method_response.subscribe_options_response,
+  aws_api_gateway_integration.subscribe_options_integration
+]
   rest_api_id = aws_api_gateway_rest_api.api.id
   resource_id = aws_api_gateway_resource.subscribe.id
   http_method = "OPTIONS"
@@ -239,12 +249,27 @@ resource "aws_api_gateway_deployment" "deploy" {
       aws_api_gateway_resource.events.id,
       aws_api_gateway_method.events_get_method.id,
       aws_api_gateway_integration.events_get_integration.id,
+      aws_api_gateway_method.events_options.id,
+      aws_api_gateway_method_response.events_options_response.id,
+      aws_api_gateway_integration.events_options_integration.id,
+      aws_api_gateway_integration_response.events_options_integration_response.id,
+
       aws_api_gateway_resource.new_events.id,
       aws_api_gateway_method.new_events_put_method.id,
       aws_api_gateway_integration.new_events_put_integration.id,
+      aws_api_gateway_method.new_events_options.id,
+      aws_api_gateway_method_response.new_events_options_response.id,
+      aws_api_gateway_integration.new_events_options_integration.id,
+      aws_api_gateway_integration_response.new_events_options_integration_response.id,
+      
       aws_api_gateway_resource.subscribe.id,
       aws_api_gateway_method.sub_put_method.id,
       aws_api_gateway_integration.sub_put_integration.id,
+      aws_api_gateway_method.subscribe_options.id,
+      aws_api_gateway_method_response.subscribe_options_response.id,
+      aws_api_gateway_integration.subscribe_options_integration.id,
+      aws_api_gateway_integration_response.subscribe_options_integration_response.id
+
     ]))
   }
 
