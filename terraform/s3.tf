@@ -61,22 +61,22 @@ data "aws_iam_policy_document" "event_policy_document" {
   }
 
   statement {
-  sid    = "AllowListBucketForGitHubActions"
-  effect = "Allow"
+    sid    = "AllowListBucketForGitHubActions"
+    effect = "Allow"
 
-  principals {
-    type        = "AWS"
-    identifiers = ["arn:aws:iam::831274730062:user/event-notify"]
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::831274730062:user/event-notify"]
+    }
+
+    actions = [
+      "s3:ListBucket"
+    ]
+
+    resources = [
+      "${aws_s3_bucket.event_announcement.arn}"
+    ]
   }
-
-  actions = [
-    "s3:ListBucket"
-  ]
-
-  resources = [
-    "${aws_s3_bucket.event_announcement.arn}"
-  ]
-}
 }
 
 
