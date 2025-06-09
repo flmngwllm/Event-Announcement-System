@@ -28,7 +28,7 @@ jobs:
 
       - name: Terraform Setup
         uses: hashicorp/setup-terraform@v3
-        
+
       - name: Verify directory structure
         run: |
           echo "📁 Root contents:"
@@ -40,11 +40,10 @@ jobs:
 
       - name: Zip Lambda function
         run: |
-          echo "Lambda folder contents:"
-          ls -l lambda
-          zip -j lambda.zip lambda/lambda_functions.py
-          echo "Zipped contents:"
-          ls -l lambda.zip
+          echo "Zipping lambda_functions.py from $(pwd)..."
+          zip ../lambda.zip lambda_functions.py
+          echo "✅ lambda.zip created in root:"
+          ls -l ../lambda.zip
 
       - name: Upload Lambda to S3
         run: |
