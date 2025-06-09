@@ -6,6 +6,16 @@ resource "aws_s3_bucket" "event_announcement" {
   }
 }
 
+resource "aws_s3_bucket_cors_configuration" "frontend_cors" {
+  bucket = aws_s3_bucket.event_announcement.id
+
+  cors_rule {
+    allowed_headers = ["*"]
+    allowed_methods = ["GET", "PUT"]
+    allowed_origins = ["*"]
+    max_age_seconds = 3000
+  }
+}
 
 resource "aws_s3_bucket_public_access_block" "public_access" {
   bucket = aws_s3_bucket.event_announcement.id

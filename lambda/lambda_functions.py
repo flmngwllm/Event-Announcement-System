@@ -20,7 +20,9 @@ def build_response(status_code, body):
         'statusCode': status_code,
         'headers': {
             'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
+            'Access-Control-Allow-Origin': '*',
+            "Access-Control-Allow-Headers": "Content-Type",
+            "Access-Control-Allow-Methods": "OPTIONS,GET,PUT"
         },
         'body': json.dumps(body) if not isinstance(body, str) else body
     }
@@ -29,16 +31,16 @@ def upload_file_to_s3(bucket_name, file_name, file_content):
     try:
         s3_client.put_object(Bucket=bucket_name, Key=file_name, Body=file_content)
     except Exception as e:
-        logger.error(f"Error uploading file to s3: {e}")
+        logger.error(f"Error uploading file to s3: {e}", exc_info=True)
         raise
 
 
 def create_events_handler(events, context):
     try:
         body = json.loads(events['body'])
-        eventId = body['id']
-        eventName = body['name']
-        eventDate = body['date']
+        eventId = body.get('id')
+        eventName = body.get('name')
+        eventDate = body.get('date')
 
         if not (eventId and eventName and eventDate):
             return build_response(400, {'error': 'Missing required fields: id, name, or date'})
@@ -82,11 +84,11 @@ def subscribe_handler(events, context):
         return build_response(200, {'message': 'Subscription successful. Please check your email to confirm subscription.'})
     
     except Exception as e:
-        logger.error(f"Error subscribing email: {e}")
+        logger.error(f"Error subscribing email: {e}", exc_info=True)
         return build_response(500, {'error': 'Internal server error'})
 
 
-def get_events_handler(event, context):
+def get_events_handler(events, context):
     try:
         response = s3_client.get_object(Bucket=BUCKET_NAME, Key=Events_File)
         events_data = response['Body'].read().decode('utf-8')
@@ -96,5 +98,5 @@ def get_events_handler(event, context):
         return build_response(200, '[]')
 
     except Exception as e:
-        logger.error(f"Error fetching events: {e}")
+        logger.error(f"Error fetching events: {e}", exc_info=True)
         return build_response(500, {'error': 'Internal server error'})
