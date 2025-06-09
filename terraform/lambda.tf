@@ -125,6 +125,7 @@ resource "aws_lambda_function" "events" {
   }
 }
 
+
 resource "aws_lambda_permission" "create_events_permission" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
