@@ -64,7 +64,7 @@ def create_events_handler(events, context):
         return build_response(200, {'message': 'Event has been successfully created'})
     except Exception as e:
         logger.error(f"Error creating event: {e}")
-        return build_response(500, {'error': 'Internal server error'})
+        return build_response(500, {'error': f"{str(e)}"})
     
 
 def subscribe_handler(events, context):
@@ -87,7 +87,7 @@ def subscribe_handler(events, context):
     
     except Exception as e:
         logger.error(f"Error subscribing email: {e}", exc_info=True)
-        return build_response(500, {'error': 'Internal server error'})
+        return build_response(500, {'error': f"{str(e)}"})
 
 
 def get_events_handler(events, context):
@@ -101,4 +101,4 @@ def get_events_handler(events, context):
 
     except Exception as e:
         logger.error(f"Error fetching events: {e}", exc_info=True)
-        return build_response(500, {'error': 'Internal server error'})
+        return build_response(500, {'error': f"{str(e)}"})
