@@ -37,6 +37,7 @@ data "aws_iam_policy_document" "lambda_policy" {
     effect = "Allow"
     actions = [
       "sns:Publish",
+      "sns:Subscribe"
     ]
     resources = [
       aws_sns_topic.sns_event_announce.arn,
