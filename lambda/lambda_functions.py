@@ -36,6 +36,7 @@ def upload_file_to_s3(bucket_name, file_name, file_content):
 
 
 def create_events_handler(events, context):
+
     try:
         body = json.loads(events['body'])
         eventId = body.get('id')
@@ -60,12 +61,33 @@ def create_events_handler(events, context):
 
         updated_json = json.dumps(existing_events, indent=2)
         upload_file_to_s3(BUCKET_NAME, Events_File, updated_json)
+        
+        subject = 'New Event Created'
+        message = f"A new event is happening soon. {eventName} is starting on {eventDate}."
 
+        try:
+            sns.publish(
+                TopicArn=TOPIC_ARN,
+                Subject=subject,
+                Message=message
+        )     
+        except Exception as e:
+            logger.error(f"Error publishing to SNS: {e}", exc_info=True)
+            return build_response(500, {'error' : f"Failed to publish notification: {str(e)}"})
+        
         return build_response(200, {'message': 'Event has been successfully created'})
     except Exception as e:
         logger.error(f"Error creating event: {e}")
         return build_response(500, {'error': f"{str(e)}"})
-    
+
+#   
+def subscription_exists(topic_arn, email):
+    paginator = sns.get_paginator('list_subscriptions_by_topic')
+    for page in paginator.paginate(TopicArn=topic_arn):
+        for sub in page['Subscriptions']:
+            if sub['Endpoint'] == email and sub['Protocol'] == 'email':
+                return True
+    return False
 
 def subscribe_handler(events, context):
     try:
@@ -76,6 +98,9 @@ def subscribe_handler(events, context):
 
         if not TOPIC_ARN:
             return build_response(500, {'error': 'TOPIC_ARN environment variable not set'})
+        
+        if subscription_exists(TOPIC_ARN, email):
+            return build_response(400, {'error': 'Email has already been subscribed'})
         
         sns.subscribe(
             TopicArn=TOPIC_ARN,
