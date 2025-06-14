@@ -39,10 +39,9 @@ fetch('./config.json')
         console.log('Event created:', data);
 
       // Clear input fields after successful creation
-        eventName.value = '';
-        eventDate.value = '';
-        eventId.value = '';
-
+      const eventName = document.getElementById('eventName').value = '';
+      const eventDate = document.getElementById('eventDate').value = '';
+      const eventId = document.getElementById('eventId').value = '';
         getEvents(apiBaseUrl); 
       }).catch(error => {
         console.error('Fetch error:', error);
@@ -75,7 +74,9 @@ fetch('./config.json')
         return response.json();
       }).then(data => {
         console.log('Subscription successful:', data);
-        email.value = '';
+        
+        // Clear input fields after successful subscription
+        document.getElementById('email').value = ''
       }).catch(error => {
         console.error('Fetch error:', error);
       });
