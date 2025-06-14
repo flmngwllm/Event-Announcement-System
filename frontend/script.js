@@ -10,7 +10,7 @@ fetch('./config.json')
       const eventName = document.getElementById('eventName').value;
       const eventDate = document.getElementById('eventDate').value;
       const eventId = document.getElementById('eventId').value;
-      const eventButton = doccument.getElementById('eventButton');
+      const eventButton = document.getElementById('eventButton');
       
       if (!eventName || !eventDate || !eventId) {
         eventButton.disabled = true;
