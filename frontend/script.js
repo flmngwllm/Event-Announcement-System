@@ -10,6 +10,13 @@ fetch('./config.json')
       const eventName = document.getElementById('eventName').value;
       const eventDate = document.getElementById('eventDate').value;
       const eventId = document.getElementById('eventId').value;
+      const eventButton = doccument.getElementById('eventButton');
+      
+      if (!eventName || !eventDate || !eventId) {
+        eventButton.disabled = true;
+      } else {
+        eventButton.disabled = false;
+      }
 
       const payload = {
         id: eventId,
@@ -30,6 +37,12 @@ fetch('./config.json')
         return response.json();
       }).then(data => {
         console.log('Event created:', data);
+
+      // Clear input fields after successful creation
+        eventName.value = '';
+        eventDate.value = '';
+        eventId.value = '';
+
         getEvents(apiBaseUrl); 
       }).catch(error => {
         console.error('Fetch error:', error);
@@ -41,6 +54,13 @@ fetch('./config.json')
       e.preventDefault();
 
       const email = document.getElementById('email').value;
+      const subButton = document.getElementById('subButton');
+
+      if (!email) {
+        subButton.disabled = true;
+      } else {
+        subButton.disabled = false;
+      }
 
       fetch(`${apiBaseUrl}/subscribe`, {
         method: 'PUT',
@@ -55,12 +75,13 @@ fetch('./config.json')
         return response.json();
       }).then(data => {
         console.log('Subscription successful:', data);
+        email.value = '';
       }).catch(error => {
         console.error('Fetch error:', error);
       });
     });
 
-    // Initial call to get events
+  // Initial call to get events
     getEvents(apiBaseUrl);
   })
   .catch(error => {
