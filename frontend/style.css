@@ -114,3 +114,45 @@ p {
     color: #ffffff;    
 }
 
+
+@media (max-width: 768px) {
+    h1 {
+      font-size: 28px;
+    }
+  
+    h3 {
+      font-size: 18px;
+    }
+  
+    p {
+      font-size: 14px;
+      padding: 0 10px;
+    }
+  
+    #eventsCard ul {
+      justify-content: center; /* stack cards and center them */
+    }
+  
+    #eventsCard li {
+      width: 90%;
+      margin: 10px auto;
+    }
+  
+    #neweventCard,
+    #subCard {
+      width: 90%;
+      height: auto;
+      padding: 15px;
+    }
+  
+    #neweventCard input,
+    #subCard input {
+      width: 100%;
+      margin: 10px 0;
+    }
+  
+    #subCard button {
+      width: 100%;
+      margin: 10px 0 0;
+    }
+  }
