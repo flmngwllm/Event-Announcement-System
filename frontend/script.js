@@ -103,7 +103,7 @@ function getEvents(apiBaseUrl) {
     list.innerHTML = '';
     data.forEach(event => {
       const item = document.createElement('li');
-      item.textContent = `${event.name} - ${event.date}`;
+      item.textContent = `${event.name} <br><br> ${event.date}`;
       list.appendChild(item);
     });
   }).catch(error => {
