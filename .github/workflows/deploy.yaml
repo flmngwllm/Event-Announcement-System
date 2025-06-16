@@ -1,6 +1,11 @@
 name: Deploy Application (Lambda + Frontend)
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'lamnbda/**'
+      - 'frontend/**'
   workflow_run:
     workflows: ["Terraform Infrastructure"]
     types:
