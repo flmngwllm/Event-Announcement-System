@@ -130,7 +130,7 @@ p {
     }
   
     #eventsCard ul {
-      justify-content: center; /* stack cards and center them */
+      justify-content: center; 
     }
   
     #eventsCard li {

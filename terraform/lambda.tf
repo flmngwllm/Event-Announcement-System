@@ -47,6 +47,24 @@ data "aws_iam_policy_document" "lambda_policy" {
 
   }
 
+  statement {
+    effect = "Allow"
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
+    ]
+    resources = [
+      aws_cloudwatch_log_group.lambda_functions_logs["create_events"].arn,
+      "${aws_cloudwatch_log_group.lambda_functions_logs["create_events"].arn}/*",
+      aws_cloudwatch_log_group.lambda_functions_logs["subscribe"].arn,
+      "${aws_cloudwatch_log_group.lambda_functions_logs["subscribe"].arn}/*",
+      aws_cloudwatch_log_group.lambda_functions_logs["events"].arn,
+      "${aws_cloudwatch_log_group.lambda_functions_logs["events"].arn}/*"
+    ]
+
+  }
+
 }
 
 
