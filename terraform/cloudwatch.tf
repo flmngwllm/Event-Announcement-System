@@ -39,7 +39,7 @@ resource "aws_cloudwatch_metric_alarm" "lambda_errors" {
   dimensions = {
     FunctionName = each.value
   }
-  alarm_actions = [aws_sns_topic.alarm_notifications.arn]
+  alarm_actions = [aws_sns_topic.sns_event_announce.arn]
 }
 
 
